@@ -1,0 +1,26 @@
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+      - ./client:/usr/local/app/client
+      - node_modules_oauth_client:/usr/local/app/client/node_modules
+    ports:
+      - "9000:9000" 
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+      - ./server:/usr/local/app/server
+      - node_modules_oauth_server:/usr/local/app/server/node_modules
+    ports:
+      - "9001:9001"
+
+volumes:
+  node_modules_oauth_client:
+  node_modules_oauth_server:
