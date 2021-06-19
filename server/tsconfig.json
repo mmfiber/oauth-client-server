@@ -34,5 +34,8 @@
     "./index.ts",
     "./src/**/*.tsx",
     "./src/**/*.ts"
+  ],
+  "files": [
+    "./@types/express-custom.d.ts"
   ]
 }
