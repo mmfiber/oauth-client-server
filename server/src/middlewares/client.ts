@@ -20,6 +20,6 @@ export function parseClientCredentials(req: Request, _: Response, next: NextFunc
 }
 
 function decodeClientCredentials(auth: string) {
-	const credentials = Buffer.from(auth.slice("basic ".length), "base64").toString().split(":")
-	return { id: credentials[0] || "", secret: credentials[1] || ""};
-};
+  const credentials = Buffer.from(auth.slice("basic ".length), "base64").toString().split(":")
+  return { id: credentials[0] || "", secret: credentials[1] || ""}
+}

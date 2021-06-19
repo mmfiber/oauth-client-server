@@ -12,8 +12,8 @@ export default class AuthorizeController {
     }
 
     const code = auth.generateCode()
-    const url = urlBuilder("http://localhost:9001/", { code })
-    // const url = urlBuilder(req.params.redirect_uri, { code: "code" })
+    // const url = urlBuilder("http://localhost:9001/", { code })
+    const url = urlBuilder(req.params.redirect_uri, { code })
     res.redirect(url)
   }
 }

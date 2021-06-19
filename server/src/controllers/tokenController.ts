@@ -1,10 +1,14 @@
 
 import { Request, Response } from "express"
-import logger from "../middlewares/logger"
+import Oauth from "../businessLogic/oauth"
 
 export default class TokenController {
   public create (req: Request, res: Response) {
-    if(req.params.grant_type === "authorization_code")
-    res.redirect(url)
+    const auth = new Oauth(req.clientCredentials)
+    const accessToken = auth.generateAccessToken(
+      req.params.grant_type,
+      { code: req.params.code }
+    )
+    res.status(200).json({ accessToken })
   }
 }
