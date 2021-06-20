@@ -1,5 +1,7 @@
-// import AuthorizeController from "./authorizeController"
+import AuthController from "./authController"
+import AuthorizeController from "./auth/oauth/authorizeController"
 
 export default {
-  // AuthorizeController: new AuthorizeController()
+  AuthController: new AuthController(),
+  AuthorizeController: new AuthorizeController(),
 }
