@@ -1,7 +1,5 @@
-import { OauthResponseType } from "./types"
-
 export interface ClientQuery {
-  response_type: OauthResponseType
+  response_type: string
   client_id: string
   redirect_uri: string
   scope: string

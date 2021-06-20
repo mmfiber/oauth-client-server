@@ -2,4 +2,17 @@ extends ../layouts/_base.pug
 
 block body-content
   h1 client oauth
-  a(href=oauthAuthorizeUrl) oauth
+  form(action=oauthAuthorizeUrl method="get")
+    p
+      h4 Grant type:
+      label
+        input.with-gap(type="radio" name="grant_type" value="code" checked)
+        span code
+    p
+      h4 Scopes:
+      label
+        input.filled-in(type="checkbox" name="scope[]" value="hoge" checked)
+        span hoge
+    p
+      button.btn(type="submit" name="action")
+        span get access token

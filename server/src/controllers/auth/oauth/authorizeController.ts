@@ -18,7 +18,7 @@ export default class AuthorizeController {
     }
 
     const code = auth.generateCode()
-    const url = urlBuilder(auth.redirectUri, { code })
+    const url = urlBuilder(auth.redirectUri, { code, state: auth.state })
     res.redirect(url)
   }
 }
