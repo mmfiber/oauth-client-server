@@ -1,6 +1,6 @@
 
 import { Request, Response } from "express"
-import Oauth from "../businessLogic/oauth"
+import Oauth from "src/businessLogic/oauth"
 
 export default class TokenController {
   public create (req: Request, res: Response) {

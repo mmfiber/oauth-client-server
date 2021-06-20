@@ -1,5 +1,7 @@
-import { logger } from "../middlewares/logger"
-import { ClientCredentials } from "../types/interfaces"
+// import { logger } from "../middlewares/logger"
+// import { Request } from "express"
+// import { ClientCredentials } from "../types/interfaces"
+import { AuthorizeQuery } from "src/types/models"
 
 type GenerateAccessTokenOptions = {
   code?: string
@@ -10,15 +12,30 @@ type Client = {
 }
 
 export default class Oauth {
-  private client: Client
+  private client: Client = {}
+  private _state: string | null = null
+  private _redirectUri: string | null = null
+ 
+  // constructor(query: Request["query"]) {
+  //   // fetch client with id and secret from model and verify credentials in model
+  //   logger.debug("query: ", query)
+  //   this.client = {
+  //     id: credentials?.id,
+  //     secret: credentials?.secret
+  //     redirectUri: credentials?.redir
+  //   } 
+  // }
 
-  constructor(credentials: ClientCredentials) {
-    // fetch client with id and secret from model and verify credentials in model
-    logger.debug("credentials: ", credentials)
-    this.client = {
-      id: credentials?.id,
-      secret: credentials?.secret
-    } 
+  get state() {
+    return this._state
+  }
+  get redirectUri() {
+    return this._redirectUri
+  }
+
+  public setAuthorizeQuery(q: AuthorizeQuery) {
+    this._state = q.state
+    this._redirectUri = q.redirectUri
   }
 
   public verifyClientCredentials() {

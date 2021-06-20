@@ -1,7 +1,8 @@
 import express from "express"
 import dotenv from "dotenv"
 
-import router from "./src/router" 
+import router from "src/router" 
+import { expressLogger } from "src/middlewares/logger"
 
 const app = express()
 const port = 9000
@@ -11,6 +12,7 @@ dotenv.config()
 
 // set middlewares
 app.use(router)
+app.use(expressLogger)
 
 // set view config
 app.set("views", "./src/views")

@@ -1,4 +1,4 @@
-import AuthorizeController from "./authorizeController"
+import AuthorizeController from "./auth/oauth/authorizeController"
 
 export default {
   AuthorizeController: new AuthorizeController()
