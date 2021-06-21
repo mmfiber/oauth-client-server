@@ -1,4 +1,4 @@
-import { ClientQuery } from "src/types/itnterfaces"
+import { ClientQuery } from "../types/itnterfaces"
 
 class AuthStore {
   private _state: string = ""

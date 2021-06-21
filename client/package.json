@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-pino-logger": "^6.0.0",
@@ -11,6 +12,7 @@
     "pino-pretty": "^5.0.2"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.10",
     "@types/express": "^4.17.12",
     "@types/express-pino-logger": "^4.0.2",
     "@types/node": "^15.12.4",
@@ -21,8 +23,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "tsnd --watch . --files ./index.ts | ./node_modules/.bin/pino-pretty --colorize",
-    "build": "tsc"
+    "watch": "tsnd --watch . ./index.ts | ./node_modules/.bin/pino-pretty --colorize",
+    "build": "tsc -p tsconfig.json",
+    "start": "node ./dist/index.js | ./node_modules/.bin/pino-pretty --colorize"
   },
   "author": "",
   "license": "ISC"

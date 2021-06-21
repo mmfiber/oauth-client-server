@@ -1,0 +1,13 @@
+.vertical-align-bottom {
+  vertical-align: bottom;
+}
+
+.pl-4 {
+  padding-left: 12px;
+}
+.pr-4 {
+  padding-right: 12px;
+}
+.mb-9 {
+  margin-bottom: 32px;
+}

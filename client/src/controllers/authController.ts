@@ -1,6 +1,6 @@
 
 import { Request, Response } from "express"
-import { currentHost } from "src/utils"
+import { currentHost } from "../utils"
 
 export default class AuthController {
   public index (req: Request, res: Response) {

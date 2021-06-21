@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 
 export function parseClientCredentials(req: Request, _: Response, next: NextFunction ) {
+  console.log("middle")
   req.clientCredentials = {}
   const auth = req.headers["authorization"]
   if(!auth) return next()

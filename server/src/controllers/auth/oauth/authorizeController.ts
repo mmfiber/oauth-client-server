@@ -1,11 +1,12 @@
 
 import { Request, Response } from "express"
-import Oauth from "src/businessLogic/oauth"
-import { AuthorizeQuery } from "src/types/models"
-import { urlBuilder } from "src/utils"
+import Oauth from "../../../businessLogic/oauth"
+import { AuthorizeQuery } from "../../../types/models"
+import { urlBuilder } from "../../../utils"
 
 export default class AuthorizeController {
-  public index (req: Request, res: Response, ) {
+  public authorize (req: Request, res: Response, ) {
+    console.log("authorize")
     const auth = new Oauth()
     const query = new AuthorizeQuery(req.query)
     auth.setAuthorizeQuery(query)
@@ -20,5 +21,16 @@ export default class AuthorizeController {
     const code = auth.generateCode()
     const url = urlBuilder(auth.redirectUri, { code, state: auth.state })
     res.redirect(url)
+  }
+
+  public token (req: Request, res: Response) {
+    console.log("token", req)
+    console.log(req.clientCredentials)
+    const auth = new Oauth()
+    const accessToken = auth.generateAccessToken(
+      req.body.grant_type,
+      { code: req.body.code }
+    )
+    res.status(200).json({ accessToken })
   }
 }
