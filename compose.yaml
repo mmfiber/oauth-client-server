@@ -5,10 +5,10 @@ services:
       dockerfile: Dockerfile
     tty: true
     volumes:
-      - ./client:/usr/local/app/client
+      - .:/usr/local/app
       - node_modules_oauth_client:/usr/local/app/client/node_modules
     ports:
-      - "9000:9000" 
+      - "9000:9000"
 
   server:
     build:
@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile
     tty: true
     volumes:
-      - ./server:/usr/local/app/server
+      - .:/usr/local/app
       - node_modules_oauth_server:/usr/local/app/server/node_modules
     ports:
       - "9001:9001"
