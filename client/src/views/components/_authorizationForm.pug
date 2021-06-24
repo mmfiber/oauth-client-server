@@ -6,9 +6,15 @@ form(action=oauthAuthorizeUrl method="post")
       span code
   p
     h4 Scopes:
-    label
-      input.filled-in(type="checkbox" name="scope[]" value="hoge" checked)
-      span hoge
+    .row
+      .col.s12
+        label
+          input.filled-in(type="checkbox" name="scope[]" value="hoge")
+          span hoge
+      .col.s12
+        label
+          input.filled-in(type="checkbox" name="scope[]" value="fuga")
+          span fuga
   p
     button.btn(type="submit" name="action")
       span get access token

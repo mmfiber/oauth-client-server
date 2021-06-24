@@ -2,7 +2,7 @@
 import { Request, Response } from "express"
 import { oauthCallbackUrl } from "../../utils"
 import Oauth from "../../businessLogic/oauth"
-import store from "src/store"
+import store from "../../store"
 
 export default class OauthController {
   private oauth: Oauth
