@@ -1,0 +1,109 @@
+import axios from "axios"
+import crypto from "crypto"
+import qs from "querystring"
+import { RequestQuery } from "src/types/types"
+import { logger } from "../middlewares/logger"
+import store from "../store"
+
+export default class Oauth {
+  private _state: string
+
+  public redirectUri : string
+  public responseType: string
+
+  constructor() {
+    store.auth.setClientId(process.env.CLIENT_ID || "")
+    store.auth.setClientSecret(process.env.CLIENT_SECRET || "")
+    this._state = crypto.randomBytes(8).toString('hex')
+  }
+
+  get accessToken() {
+    return store.auth.accessToken
+  }
+  get client() {
+    return {
+      id: store.auth.clientId,
+      secret: store.auth.clientSecret
+    }
+  }
+  get state() {
+    return this._state
+  }
+  get scope() {
+    return store.auth.scope
+  }
+  set scope(scope: string[]) {
+    store.auth.setScope(scope)
+  }
+  get scopeString() {
+    return store.auth.scopeString
+  }
+
+  public authorizeUrl() {
+    const error = []
+    if(!this.redirectUri)
+      error.push("redirect_uri is missing")
+    if(!this.responseType)
+      error.push("responseType is missing")
+    if(!this.scope || this.scope.length === 0)
+      error.push("scope is missing")
+
+    if(error.length !== 0) {
+      logger.error(error)
+      return null
+    }
+
+    const queryItem = {
+      client_id:     this.client.id,
+      redirect_uri:  this.redirectUri,
+      response_type: this.responseType,
+      scope:         this.scopeString,
+      state:         this.state
+    }
+    const query = qs.stringify(queryItem)
+    const url = process.env.AUTHORIZATION_ENDPOINT + "?" + query
+    return url
+  }
+
+  public veryfyState(state: RequestQuery) {
+    if(!state || state !== this.state) {
+      logger.error(`Invalid state is given: ${state}`)
+      return false
+    }
+    return true
+  }
+
+  public async getAccessToken(code: RequestQuery): Promise<string | null> {
+    if(!process.env.TOKEN_ENDPOINT) {
+      logger.error("Token end point is undefined")
+      return null
+    }
+    if(!code) {
+      logger.error("Authorization code is missing")
+      return null
+    }
+    if(typeof code !== "string") {
+      logger.error(`Authorization code is invalid, ${code}`)
+      return null
+    }
+    const credentials = Buffer.from(`${this.client.id}:${this.client.secret}`).toString('base64')
+    const headers = {
+      "Content-Type": "application/json",
+      "Authorization": `Basic ${credentials}`
+    }
+    const data = {
+      grant_type: "authorization_code",
+      redirect_uri: this.redirectUri,
+      code
+    }
+    try {
+      const res = await axios.post(process.env.TOKEN_ENDPOINT, data, { headers })
+      const accessToken = res.data?.accessToken
+      store.auth.setAccessToken(accessToken) 
+      return accessToken
+    } catch(e) {
+      logger.error(e)
+      return null
+    }
+  }
+}

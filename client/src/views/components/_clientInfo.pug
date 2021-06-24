@@ -1,5 +1,19 @@
-div(style="max-width: 600px;")
-  table
-    tr
-      th client_id 
-      td id
+if(auth)
+  div(style="max-width: 600px;")
+    table
+      if(auth.accessToken)
+        tr
+          th accessToken 
+          td #{auth.accessToken}
+      if(auth.clientId)
+        tr
+          th client_id 
+          td #{auth.clientId}
+      if(auth.clientSecret)
+        tr
+          th client_secret 
+          td #{auth.clientSecret}
+      if(auth.scope)
+        tr
+          th scope
+          td #{auth.scope}

@@ -1,19 +1,17 @@
-import { ClientQuery } from "../types/itnterfaces"
-
 class AuthStore {
-  private _state: string = ""
-  private _clientId: string = ""
-  private _redirectUri: string = ""
-  private _scope: string[] = [""]
+  private _accessToken : string = ""
+  private _clientId    : string = ""
+  private _clientSecret: string = ""
+  private _scope       : string[] = [""]
 
-  get state() {
-    return this._state
+  get accessToken() {
+    return this._accessToken
   }
-  get clietId() {
+  get clientId() {
     return this._clientId
   }
-  get redirectUri() {
-    return this._redirectUri
+  get clientSecret() {
+    return this._clientSecret
   }
   get scope() {
     return this._scope
@@ -22,28 +20,17 @@ class AuthStore {
     return this._scope.join(" ")
   }
 
-  public setClientQuery(q: ClientQuery) {
-    if(q.state)
-      this.setState(q.state)
-    if(q.client_id)
-      this.setClientId(q.client_id)
-    if(q.redirect_uri)
-      this.setRedirectUri(q.redirect_uri)
-    if(q.scope)
-      this.setScope(q.scope)
+  public setAccessToken(accessToken: string) {
+    this._accessToken = accessToken
   }
-
-  private setState(state: string) {
-    this._state = state
-  }
-  private setClientId(clientId: string) {
+  public setClientId(clientId: string) {
     this._clientId = clientId
   }
-  private setRedirectUri(redirectUri: string) {
-    this._redirectUri = redirectUri
+  public setClientSecret(clientSecret: string) {
+    this._clientSecret = clientSecret
   }
-  private setScope(scope: string) {
-    this._scope = scope.split(" ")
+  public setScope(scope: string[]) {
+    this._scope = scope
   }
 }
 
