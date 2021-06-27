@@ -40,16 +40,16 @@ export default class Oauth {
   }
 
   public authorizeUrl() {
-    const error = []
-    if(!this.redirectUri)
-      error.push("redirect_uri is missing")
-    if(!this.responseType)
-      error.push("responseType is missing")
-    if(!this.scope || this.scope.length === 0)
-      error.push("scope is missing")
-
-    if(error.length !== 0) {
-      logger.error(error)
+    if(!this.redirectUri) {
+      logger.error("redirect_uri is missing")
+      return null
+    }
+    if(!this.responseType) {
+      logger.error("responseType is missing")
+      return null
+    }
+    if(!this.scope || this.scope.length === 0) {
+      logger.error("scope is missing")
       return null
     }
 

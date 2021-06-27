@@ -6,7 +6,7 @@ export default class CreateClients implements Seeder {
   public async run(factory: Factory) {
     const secret = "secret"
     await factory(Client)({
-      secret: crypto.createHash("sha512").update(secret).digest("hex")
+      secret: crypto.createHash("sha256").update(secret).digest("hex")
     }).createMany(3)
   }
 }

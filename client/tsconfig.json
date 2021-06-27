@@ -32,7 +32,7 @@
   ],
   "include": [
     "./index.ts",
-    "./src/**/*.tsx",
-    "./src/**/*.ts"
+    "./src/**/*.ts",
+    "./src/public"
   ]
 }
