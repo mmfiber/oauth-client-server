@@ -1,0 +1,15 @@
+{
+  "type": "mysql",
+  "host": "db",
+  "port": 3306,
+  "username": "root",
+  "password": "password",
+  "database": "server",
+  "entities": ["src/models/*.ts"],
+  "migrations": ["src/migrations/*.ts"],
+  "seeds": ["src/seeds/**/*.ts"],
+  "factories": ["src/factories/**/*.ts"],
+  "cli": {
+    "migrationsDir": "src/migrations"
+  }
+}

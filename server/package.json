@@ -7,13 +7,18 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-pino-logger": "^6.0.0",
+    "mysql2": "^2.2.5",
     "pino": "^6.11.3",
-    "pino-pretty": "^5.0.2"
+    "pino-pretty": "^5.0.2",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.34",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.12",
     "@types/express-pino-logger": "^4.0.2",
+    "@types/faker": "^5.5.6",
     "@types/node": "^15.12.4",
     "@types/pino": "^6.3.8",
     "ts-node-dev": "^1.1.6",
@@ -22,7 +27,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "tsnd --watch . --files ./index.ts | ./node_modules/.bin/pino-pretty --colorize",
-    "build": "tsc"
+    "build": "tsc",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+    "typeorm:seed": "node --require ts-node/register ./node_modules/typeorm-seeding/dist/cli.js seed",
+    "typeorm:migrate": "npm run typeorm migration:run",
+    "typeorm:revert": "npm run typeorm migration:revert"
   },
   "author": "",
   "license": "ISC"
