@@ -21,6 +21,21 @@ services:
     ports:
       - "9001:9001"
 
+  db:
+    image: mysql
+    tty: true
+    environment:
+      MYSQL_DATABASE: server
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - database:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
 volumes:
   node_modules_oauth_client:
   node_modules_oauth_server:
+  database:
