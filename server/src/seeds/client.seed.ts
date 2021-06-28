@@ -1,5 +1,5 @@
 import { Factory, Seeder } from "typeorm-seeding"
-import { Client } from "../models/client"
+import { Client } from "../entities/client"
 import crypto from "crypto"
 
 export default class CreateClients implements Seeder {

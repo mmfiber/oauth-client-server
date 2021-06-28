@@ -1,52 +1,56 @@
-// import { logger } from "../middlewares/logger"
-// import { Request } from "express"
-// import { ClientCredentials } from "../types/interfaces"
+import { Client } from "../entities/client"
+import ClientModel from "../models/client"
+import { Code } from "../entities/code"
+import CodeModel from "../models/code"
 import { AuthorizeQuery } from "src/types/models"
+import { urlBuilder } from "../utils"
+// import { logger } from "src/middlewares/logger"
 
 type GenerateAccessTokenOptions = {
   code?: string
 }
-type Client = {
-  id?: string
-  secret?: string
-}
-
 export default class Oauth {
-  private client: Client = {}
-  private _state: string | null = null
-  private _redirectUri: string | null = null
+  private _client      : Client
+  private _clientId    : string
+  private _code        : Code
+  // private _scope       : string[]
+  private _state       : string
+  private _redirectUri : string
+  // private _responseType: string
  
-  // constructor(query: Request["query"]) {
-  //   // fetch client with id and secret from model and verify credentials in model
-  //   logger.debug("query: ", query)
-  //   this.client = {
-  //     id: credentials?.id,
-  //     secret: credentials?.secret
-  //     redirectUri: credentials?.redir
-  //   } 
-  // }
-
-  get state() {
-    return this._state
-  }
-  get redirectUri() {
-    return this._redirectUri
+  constructor(query: AuthorizeQuery) {
+    this._clientId     = query.clientId
+    // this._scope        = query.scope
+    this._state        = query.state
+    this._redirectUri  = query.redirectUri
+    // this._responseType = query.responseType
   }
 
-  public setAuthorizeQuery(q: AuthorizeQuery) {
-    this._state = q.state
-    this._redirectUri = q.redirectUri
+  public async getClient() {
+    const client = await ClientModel.findById(this._clientId)
+    if(!client) return null
+    this._client = client
+    return this._client
   }
 
   public verifyClientCredentials() {
-    return this.client !== null
+    return true
   }
 
-  public generateCode() {
-    if(!this.verifyClientCredentials) throw new Error(`Invalid client credentials`)
-    // generate code logic here
-    const code = "code"
-    return code
+  public async generateCode() {
+    const code = await CodeModel.create()
+    if(!code) return null
+    this._code = code
+    return this._code
+  }
+
+  public buildRedirectUri(...options: string[]) {
+    const params: any = {}
+    if(options.includes("code"))
+      params.code = this._code.value || undefined
+    if(options.includes("state"))
+      params.state = this._state
+    return urlBuilder(this._redirectUri, params)
   }
 
   public generateAccessToken(grantType: string, options: GenerateAccessTokenOptions = {}) {

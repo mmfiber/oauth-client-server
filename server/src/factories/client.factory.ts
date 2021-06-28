@@ -1,6 +1,6 @@
 import Faker from "faker"
 import { define } from "typeorm-seeding"
-import { Client } from "../models/client"
+import { Client } from "../entities/client"
 
 interface Context {
   secret: string

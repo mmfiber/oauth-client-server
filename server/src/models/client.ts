@@ -1,23 +1,13 @@
-import {
-  Entity,
-  PrimaryColumn,
-  Generated,
-  Column,
-} from "typeorm"
+import { logger } from "src/middlewares/logger"
+import { Client } from "../entities/client"
 
-@Entity({name: "clients"})
-export class Client {
-  @PrimaryColumn({
-    type: "varchar",
-    length: 128,
-    unique: true,
-  })
-  @Generated("uuid")
-  id: string
-
-  @Column({
-    type: "text",
-    unique: true,
-  })
-  secret: string
+export default class ClientModel {
+  static async findById(id: string) {
+    try {
+      return await Client.findOne({id})
+    } catch(e) {
+      logger.error(e)
+      return null
+    }
+  }
 }
