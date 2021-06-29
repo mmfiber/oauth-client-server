@@ -5,6 +5,7 @@ import { AuthorizeQuery } from "../../../types/models"
 
 export default class AuthorizeController {
   private oauth: Oauth
+
   public async authorize (req: Request, res: Response, ) {
     const query = new AuthorizeQuery(req.query)
     if(!query.validate()) {
@@ -28,8 +29,9 @@ export default class AuthorizeController {
   }
 
   public token (req: Request, res: Response) {
-    console.log("token", req)
-    console.log(req.clientCredentials)
+    if(!this.oauth.verifyClientCredentials(req.clientCredentials)) {
+      return res.status(400).json({ message: "Invalid client credentials" })
+    }
     // const auth = new Oauth()
     // const accessToken = auth.generateAccessToken(
     //   req.body.grant_type,

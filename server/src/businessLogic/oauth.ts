@@ -4,7 +4,9 @@ import { Code } from "../entities/code"
 import CodeModel from "../models/code"
 import { AuthorizeQuery } from "src/types/models"
 import { urlBuilder } from "../utils"
-// import { logger } from "src/middlewares/logger"
+import { ClientCredentials } from "src/types/interfaces"
+import { logger } from "../middlewares/logger"
+import { hash } from "../utils"
 
 type GenerateAccessTokenOptions = {
   code?: string
@@ -33,8 +35,15 @@ export default class Oauth {
     return this._client
   }
 
-  public verifyClientCredentials() {
-    return true
+  public verifyClientCredentials(credentials: ClientCredentials) {
+    if(!credentials.id || !credentials.secret) {
+      logger.error("client credentials are missing")
+      return false
+    }
+    return (
+      this._client.id === credentials.id
+      && this._client.secret === hash(credentials.secret)
+    )
   }
 
   public async generateCode() {
