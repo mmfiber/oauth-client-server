@@ -4,25 +4,26 @@ import Oauth from "../../../businessLogic/oauth"
 import { AuthorizeQuery } from "../../../types/models"
 
 export default class AuthorizeController {
+  private oauth: Oauth
   public async authorize (req: Request, res: Response, ) {
     const query = new AuthorizeQuery(req.query)
     if(!query.validate()) {
       return res.status(400).json({ message: `Invalid query: ${query.errorMsgs}` })
     }
 
-    const auth = new Oauth(query)
+   this.oauth = new Oauth(query)
 
-    const client = await auth.getClient()
+    const client = await this.oauth.getClient()
     if(!client) {
       return res.status(400).json({ message: "Client not found" })
     }
 
-    const code = await auth.generateCode()
+    const code = await this.oauth.generateCode()
     if(!code) {
       return res.status(400).json({ message: "Failed to create authrization code" })
     }
 
-    const url = auth.buildRedirectUri("code", "state")
+    const url = this.oauth.buildRedirectUri("code", "state")
     res.redirect(url)
   }
 
