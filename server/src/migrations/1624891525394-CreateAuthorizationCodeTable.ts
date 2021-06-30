@@ -9,7 +9,7 @@ export class CreateAuthorizationCodeable1624891525394 implements MigrationInterf
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(new Table({
-            name: "authorizationCodes",
+            name: "authorization_codes",
             columns: [
               {
                 name: "id",
@@ -36,12 +36,17 @@ export class CreateAuthorizationCodeable1624891525394 implements MigrationInterf
                 default: "CURRENT_TIMESTAMP",
                 onUpdate: "CURRENT_TIMESTAMP"
               },
+            ],
+            indices: [
+              {
+                columnNames: ["code"]
+              }
             ]
           }), true)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("codes")
+        await queryRunner.dropTable("authorization_codes")
     }
 
 }
