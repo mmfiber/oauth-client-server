@@ -1,7 +1,7 @@
 import { Client } from "../entities/client"
 import ClientModel from "../models/client"
-import { Code } from "../entities/code"
-import CodeModel from "../models/code"
+import { AuthorizationCode } from "../entities/authorizationCode"
+import AuthorizationCodeModel from "../models/authorizationCode"
 import { AuthorizeQuery } from "src/types/models"
 import { urlBuilder } from "../utils"
 import { ClientCredentials } from "src/types/interfaces"
@@ -12,20 +12,20 @@ type GenerateAccessTokenOptions = {
   code?: string
 }
 export default class Oauth {
-  private _client      : Client
-  private _clientId    : string
-  private _code        : Code
+  private _client           : Client
+  private _clientId         : string
+  private _authorizationCode: AuthorizationCode
   // private _scope       : string[]
-  private _state       : string
-  private _redirectUri : string
-  // private _responseType: string
+  private _state            : string
+  private _redirectUri      : string
+  private _responseType     : string
  
   constructor(query: AuthorizeQuery) {
     this._clientId     = query.clientId
     // this._scope        = query.scope
     this._state        = query.state
     this._redirectUri  = query.redirectUri
-    // this._responseType = query.responseType
+    this._responseType = query.responseType
   }
 
   public async getClient() {
@@ -47,27 +47,27 @@ export default class Oauth {
   }
 
   public async generateCode() {
-    const code = await CodeModel.create()
+    const code = await AuthorizationCodeModel.create()
     if(!code) return null
-    this._code = code
-    return this._code
+    this._authorizationCode = code
+    return this._authorizationCode
   }
 
   public buildRedirectUri(...options: string[]) {
     const params: any = {}
     if(options.includes("code"))
-      params.code = this._code.value || undefined
+      params.code = this._authorizationCode.code || undefined
     if(options.includes("state"))
       params.state = this._state
     return urlBuilder(this._redirectUri, params)
   }
 
-  public generateAccessToken(grantType: string, options: GenerateAccessTokenOptions = {}) {
-    switch(grantType) {
-      case "authorization_code":
+  public generateAccessToken(options: GenerateAccessTokenOptions) {
+    switch(this._responseType) {
+      case "authorization_authorizationCode":
         return this.generateAccessTokenWithCode(options)
       default:
-        throw new Error(`Invalid grant type: ${grantType}`)
+        throw new Error(`Invalid grant type: ${this._responseType}`)
     }
   }
 

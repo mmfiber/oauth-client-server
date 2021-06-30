@@ -4,12 +4,12 @@ import {
     Table
 } from "typeorm"
 
-export class CreateCodeTable1624891525394 implements MigrationInterface {
-    name = 'CreateCodeTable1624891525394'
+export class CreateAuthorizationCodeable1624891525394 implements MigrationInterface {
+    name = 'CreateAuthorizationCodeTable1624891525394'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(new Table({
-            name: "codes",
+            name: "authorizationCodes",
             columns: [
               {
                 name: "id",
@@ -19,7 +19,7 @@ export class CreateCodeTable1624891525394 implements MigrationInterface {
                 isPrimary: true
               },
               {
-                name: "value",
+                name: "code",
                 type: "varchar(16)",
                 isNullable: false
               },

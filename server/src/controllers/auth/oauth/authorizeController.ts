@@ -32,11 +32,7 @@ export default class AuthorizeController {
     if(!this.oauth.verifyClientCredentials(req.clientCredentials)) {
       return res.status(400).json({ message: "Invalid client credentials" })
     }
-    // const auth = new Oauth()
-    // const accessToken = auth.generateAccessToken(
-    //   req.body.grant_type,
-    //   { code: req.body.code }
-    // )
+    // const accessToken = generateAccessToken()
     res.status(200).json({ accessToken: "hoge" })
   }
 }

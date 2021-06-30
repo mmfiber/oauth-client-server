@@ -5,8 +5,8 @@ import {
   BaseEntity
 } from "typeorm"
 
-@Entity({name: "codes"})
-export class Code extends BaseEntity {
+@Entity({name: "authorizationCodes"})
+export class AuthorizationCode extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number
 
@@ -15,5 +15,5 @@ export class Code extends BaseEntity {
     unique: true,
     nullable: false
   })
-  value: string
+  code: string
 }
