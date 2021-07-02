@@ -8,3 +8,8 @@ export function urlBuilder(url: string, queries: any = {}) {
 export function hash(s: string) {
   return crypto.createHash("sha256").update(s).digest("hex")
 }
+
+export function date(daysLater: number) {
+  const dt = new Date()
+  return new Date(dt.setDate((dt.getDate() + daysLater)))
+}

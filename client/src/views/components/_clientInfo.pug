@@ -4,7 +4,7 @@ if(auth)
       if(auth.accessToken)
         tr
           th accessToken 
-          td #{auth.accessToken}
+          td #{auth.accessToken.token}
       if(auth.clientId)
         tr
           th client_id 

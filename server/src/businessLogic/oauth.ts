@@ -2,19 +2,19 @@ import { Client } from "../entities/client"
 import ClientModel from "../models/client"
 import { AuthorizationCode } from "../entities/authorizationCode"
 import AuthorizationCodeModel from "../models/authorizationCode"
+import { AccessToken } from "../entities/accessToken"
+import AccessTokenModel from "../models/accessToken"
 import { AuthorizeQuery } from "src/types/models"
 import { urlBuilder } from "../utils"
 import { ClientCredentials } from "src/types/interfaces"
 import { logger } from "../middlewares/logger"
 import { hash } from "../utils"
 
-type GenerateAccessTokenOptions = {
-  code?: string
-}
 export default class Oauth {
+  private _accessToken      : AccessToken
+  private _authorizationCode: AuthorizationCode
   private _client           : Client
   private _clientId         : string
-  private _authorizationCode: AuthorizationCode
   // private _scope       : string[]
   private _state            : string
   private _redirectUri      : string
@@ -53,6 +53,40 @@ export default class Oauth {
     return this._authorizationCode
   }
 
+  public async generateAccessToken(options: any) {
+    switch(this._responseType) {
+      case "authorization_code":
+        return await this.generateAccessTokenWithCode(options)
+      default:
+        logger.error(`Invalid grant type: ${this._responseType}`)
+        return null
+    }
+  }
+
+  private async generateAccessTokenWithCode(options: any) {
+    if(!options.code) {
+      logger.error("code is not given")
+      return null
+    }
+
+    const code = await AuthorizationCodeModel.findByCode(options.code)
+    if(!code) {
+      logger.error("Invalid code")
+      return null
+    }
+    await AuthorizationCodeModel.delete(code.id)
+  
+    const accessToken = await AccessTokenModel.create()
+    if(!accessToken) {
+      logger.error("Failed to generate access token")
+      return null
+    }
+
+    console.log(accessToken)
+    this._accessToken = accessToken
+    return this._accessToken
+  }
+
   public buildRedirectUri(...options: string[]) {
     const params: any = {}
     if(options.includes("code"))
@@ -60,21 +94,5 @@ export default class Oauth {
     if(options.includes("state"))
       params.state = this._state
     return urlBuilder(this._redirectUri, params)
-  }
-
-  public generateAccessToken(options: GenerateAccessTokenOptions) {
-    switch(this._responseType) {
-      case "authorization_authorizationCode":
-        return this.generateAccessTokenWithCode(options)
-      default:
-        throw new Error(`Invalid grant type: ${this._responseType}`)
-    }
-  }
-
-  private generateAccessTokenWithCode(options: GenerateAccessTokenOptions) {
-    if(!options.code) throw new Error("code is not given")
-    // verify code here
-    const accessToken = "accessToken"
-    return accessToken
   }
 }

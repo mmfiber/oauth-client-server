@@ -24,6 +24,8 @@ export default class OauthController {
     if(!validState) res.render("auth/index", { error: "Invalid state" })
 
     const accessToken = await this.oauth.getAccessToken(req.query.code)
+    console.log("=== accessToken ===")
+    console.log(accessToken)
     if(!accessToken) res.render("auth/index", { error: "bad oauth parameter" })
 
     res.render("auth/index", { auth: store.auth })

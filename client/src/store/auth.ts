@@ -1,5 +1,5 @@
 class AuthStore {
-  private _accessToken : string = ""
+  private _accessToken : any = {}
   private _clientId    : string = ""
   private _clientSecret: string = ""
   private _scope       : string[] = [""]
@@ -20,7 +20,7 @@ class AuthStore {
     return this._scope.join(" ")
   }
 
-  public setAccessToken(accessToken: string) {
+  public setAccessToken(accessToken: any) {
     this._accessToken = accessToken
   }
   public setClientId(clientId: string) {

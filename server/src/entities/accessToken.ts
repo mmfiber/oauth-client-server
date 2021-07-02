@@ -5,15 +5,21 @@ import {
   BaseEntity
 } from "typeorm"
 
-@Entity({name: "authorization_codes"})
-export class AuthorizationCode extends BaseEntity {
+@Entity({name: "access_tokens"})
+export class AccessToken extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number
 
   @Column({
-    length: "16",
+    length: "32",
     unique: true,
     nullable: false
   })
-  code: string
+  token: string
+
+  @Column({
+    name: "expires_at",
+    nullable: false
+  })
+  expiresAt: Date
 }
