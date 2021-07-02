@@ -4,7 +4,7 @@ import { AuthorizationCode } from "../entities/authorizationCode"
 import AuthorizationCodeModel from "../models/authorizationCode"
 import { AccessToken } from "../entities/accessToken"
 import AccessTokenModel from "../models/accessToken"
-import { AuthorizeQuery } from "src/types/models"
+import { AuthorizeQuery, ServerError } from "src/types/models"
 import { urlBuilder } from "../utils"
 import { ClientCredentials } from "src/types/interfaces"
 import { logger } from "../middlewares/logger"
@@ -19,8 +19,20 @@ export default class Oauth {
   private _state            : string
   private _redirectUri      : string
   private _responseType     : string
+
+  readonly authorizeQueryProps = [
+    "clientId",
+    "scope" ,
+    "state",
+    "redirectUri",
+    "responseType"
+  ]
  
   constructor(query: AuthorizeQuery) {
+    if(!query.isDefined(this.authorizeQueryProps)) {
+      throw new ServerError("Invalid query", 500)
+    }
+
     this._clientId     = query.clientId
     // this._scope        = query.scope
     this._state        = query.state
@@ -30,25 +42,29 @@ export default class Oauth {
 
   public async getClient() {
     const client = await ClientModel.findById(this._clientId)
-    if(!client) return null
+    if(!client) throw new ServerError("Client not found", 500)
     this._client = client
     return this._client
   }
 
   public verifyClientCredentials(credentials: ClientCredentials) {
     if(!credentials.id || !credentials.secret) {
-      logger.error("client credentials are missing")
-      return false
+      throw new ServerError("client credentials are missing", 500)
     }
-    return (
+    const isValid = (
       this._client.id === credentials.id
       && this._client.secret === hash(credentials.secret)
     )
+    if(!isValid) {
+      throw new ServerError("Invalid client credentials", 500)
+    }
+    return isValid
   }
 
   public async generateCode() {
     const code = await AuthorizationCodeModel.create()
-    if(!code) return null
+    if(!code) throw new ServerError("Failed to generate authorization code", 500)
+
     this._authorizationCode = code
     return this._authorizationCode
   }
@@ -58,8 +74,7 @@ export default class Oauth {
       case "authorization_code":
         return await this.generateAccessTokenWithCode(options)
       default:
-        logger.error(`Invalid grant type: ${this._responseType}`)
-        return null
+        throw new ServerError(`Invalid grant type: ${this._responseType}`, 500)
     }
   }
 
@@ -70,19 +85,13 @@ export default class Oauth {
     }
 
     const code = await AuthorizationCodeModel.findByCode(options.code)
-    if(!code) {
-      logger.error("Invalid code")
-      return null
-    }
+    if(!code) throw new ServerError("Invalid code", 500)
+
     await AuthorizationCodeModel.delete(code.id)
   
     const accessToken = await AccessTokenModel.create()
-    if(!accessToken) {
-      logger.error("Failed to generate access token")
-      return null
-    }
+    if(!accessToken) throw new ServerError("Failed to generate access token", 500)
 
-    console.log(accessToken)
     this._accessToken = accessToken
     return this._accessToken
   }
