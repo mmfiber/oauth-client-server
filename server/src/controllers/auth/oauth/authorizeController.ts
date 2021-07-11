@@ -34,7 +34,6 @@ export default class AuthorizeController {
       }
       res.status(200).json(tokens)
     } catch(e) {
-      console.log(e)
       ErrorController.json(res, e)
     }
   }
