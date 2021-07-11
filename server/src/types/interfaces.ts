@@ -11,3 +11,8 @@ export interface AuthorizeQuery {
   scope: string
   state: string
 }
+
+export interface AuthorizeTokens {
+  access_token?: string
+  id_token?: string
+}

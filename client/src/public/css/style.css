@@ -11,3 +11,10 @@
 .mb-9 {
   margin-bottom: 32px;
 }
+
+.clientInfoTable td {
+  max-width: 600px;
+}
+.clientInfoTable td {
+  overflow-wrap : break-word;
+}

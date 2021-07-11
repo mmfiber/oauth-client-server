@@ -1,10 +1,18 @@
 if(auth)
   div(style="max-width: 600px;")
-    table
+    table.clientInfoTable
       if(auth.accessToken)
         tr
           th accessToken 
-          td #{auth.accessToken.token}
+          td #{auth.accessToken}
+      if(idToken)
+        tr
+          th idToken 
+          td #{idToken}
+      if(idTokenDecoded)
+        tr
+          th idTokenDecoded 
+          td #{JSON.stringify(idTokenDecoded)}
       if(auth.clientId)
         tr
           th client_id 

@@ -73,18 +73,18 @@ export default class Oauth {
     return true
   }
 
-  public async getAccessToken(code: RequestQuery): Promise<string | null> {
+  public async getAuthorizeTokens(code: RequestQuery): Promise<string[] | null[]> {
     if(!process.env.TOKEN_ENDPOINT) {
       logger.error("Token end point is undefined")
-      return null
+      return [null, null]
     }
     if(!code) {
       logger.error("Authorization code is missing")
-      return null
+      return [null, null]
     }
     if(typeof code !== "string") {
       logger.error(`Authorization code is invalid, ${code}`)
-      return null
+      return [null, null]
     }
     const credentials = Buffer.from(`${this.client.id}:${this.client.secret}`).toString('base64')
     const headers = {
@@ -98,12 +98,13 @@ export default class Oauth {
     }
     try {
       const res = await axios.post(process.env.TOKEN_ENDPOINT, data, { headers })
-      const accessToken = res.data?.accessToken
+      const accessToken = res.data?.access_token
+      const idToken = res.data?.id_token
       store.auth.setAccessToken(accessToken) 
-      return accessToken
+      return [accessToken, idToken]
     } catch(e) {
       logger.error(e)
-      return null
+      return [null, null]
     }
   }
 }

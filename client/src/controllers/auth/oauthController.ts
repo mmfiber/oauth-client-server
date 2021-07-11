@@ -1,8 +1,9 @@
 
 import { Request, Response } from "express"
-import { oauthCallbackUrl } from "../../utils"
+import { oauthAuthorizeUrl, oauthCallbackUrl } from "../../utils"
 import Oauth from "../../businessLogic/oauth"
 import store from "../../store"
+import jwt from "jsonwebtoken"
 
 export default class OauthController {
   private oauth: Oauth
@@ -23,11 +24,22 @@ export default class OauthController {
     const validState = this.oauth.veryfyState(req.query.state)
     if(!validState) res.render("auth/index", { error: "Invalid state" })
 
-    const accessToken = await this.oauth.getAccessToken(req.query.code)
-    console.log("=== accessToken ===")
-    console.log(accessToken)
-    if(!accessToken) res.render("auth/index", { error: "bad oauth parameter" })
 
-    res.render("auth/index", { auth: store.auth })
+    const [accessToken, idToken] = await this.oauth.getAuthorizeTokens(req.query.code)
+    if(!accessToken) res.render("auth/index", { error: "bad oauth parameter" })
+    
+    const idTokenDecoded = idToken && process.env.CLIENT_SECRET
+      ? jwt.verify(idToken, process.env.CLIENT_SECRET)
+      : null
+
+    console.log(idTokenDecoded)
+
+    res.render(
+      "auth/index", { 
+        auth: store.auth,
+        idToken,
+        idTokenDecoded,
+        oauthAuthorizeUrl: oauthAuthorizeUrl(req)
+      })
   }
 }

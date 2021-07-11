@@ -7,15 +7,15 @@ import AccessTokenModel from "../models/accessToken"
 import { AuthorizeQuery, ServerError } from "src/types/models"
 import { urlBuilder } from "../utils"
 import { ClientCredentials } from "src/types/interfaces"
-import { logger } from "../middlewares/logger"
 import { hash } from "../utils"
+import jwt from "jsonwebtoken"
 
 export default class Oauth {
   private _accessToken      : AccessToken
   private _authorizationCode: AuthorizationCode
   private _client           : Client
   private _clientId         : string
-  // private _scope       : string[]
+  private _scope            : string[]
   private _state            : string
   private _redirectUri      : string
   private _responseType     : string
@@ -34,10 +34,14 @@ export default class Oauth {
     }
 
     this._clientId     = query.clientId
-    // this._scope        = query.scope
+    this._scope        = query.scope
     this._state        = query.state
     this._redirectUri  = query.redirectUri
     this._responseType = query.responseType
+  }
+
+  get scope() {
+    return this._scope
   }
 
   public async getClient() {
@@ -79,21 +83,34 @@ export default class Oauth {
   }
 
   private async generateAccessTokenWithCode(options: any) {
-    if(!options.code) {
-      logger.error("code is not given")
-      return null
-    }
+    if(!options.code) throw new ServerError("code is not given", 400)
 
     const code = await AuthorizationCodeModel.findByCode(options.code)
     if(!code) throw new ServerError("Invalid code", 500)
 
     await AuthorizationCodeModel.delete(code.id)
-  
+
     const accessToken = await AccessTokenModel.create()
     if(!accessToken) throw new ServerError("Failed to generate access token", 500)
 
     this._accessToken = accessToken
-    return this._accessToken
+    return this._accessToken.token
+  }
+
+  public async generateIdToken(credentials: ClientCredentials){
+    if(!credentials.secret) throw new ServerError("Invalid client credentials", 400)
+  
+    const payload = {
+      name: "user",
+      email: "user@example.com"
+    }
+    const options = {
+      issuer: "http://localhost:9001",
+      audience: "http://localhost:9000",
+      subject: "user_id",
+      expiresIn: Math.floor(this._accessToken.expiresAt.getTime()/1000)
+    }
+    return jwt.sign(payload, credentials.secret, options)
   }
 
   public buildRedirectUri(...options: string[]) {

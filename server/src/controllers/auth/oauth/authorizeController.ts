@@ -1,6 +1,7 @@
 
 import { Request, Response } from "express"
 import ErrorController from "src/controllers/error"
+import { AuthorizeTokens } from "src/types/interfaces"
 import Oauth from "../../../businessLogic/oauth"
 import { AuthorizeQuery } from "../../../types/models"
 
@@ -25,9 +26,15 @@ export default class AuthorizeController {
   public async token (req: Request, res: Response) {
     try {
       this.oauth.verifyClientCredentials(req.clientCredentials)
-      const accessToken = await this.oauth.generateAccessToken({code: req.body.code})
-      res.status(200).json({ accessToken })
+
+      const tokens: AuthorizeTokens = {}
+      tokens.access_token = await this.oauth.generateAccessToken({code: req.body.code})
+      if (this.oauth.scope.includes("openid")) {
+        tokens.id_token = await this.oauth.generateIdToken(req.clientCredentials)
+      }
+      res.status(200).json(tokens)
     } catch(e) {
+      console.log(e)
       ErrorController.json(res, e)
     }
   }
